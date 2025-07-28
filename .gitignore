@@ -3,3 +3,9 @@ E-comm/
 
 # Ignore Python bytecode files
 __pycache__/
+
+# Ignore environment configuration files
+.env
+
+# Ignore log files
+*.log
