@@ -51,7 +51,7 @@ docs: add API usage instructions in Swagger
 ## Installation and Running the API
 
 ## Author
-Stephen Oloo
+Stephen Oloo (BackEnd Developer)
     - [Github Profile](https://github.com/stepholo)
     - [LinkedIn Profile](https://www.linkedin.com/in/stepholo0/)
     - [X](https://x.com/Stevenob12)
