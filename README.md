@@ -45,7 +45,7 @@ feat: implement user authentication with JWT
 feat: add product APIs with filtering and pagination
 feat: integrate Swagger documentation for API endpoints
 perf: optimize database queries with indexing
-docs: add API usage instructions in Swagger
+docs: add API usage instructions in Swagger.
 ```
 
 ## Installation and Running the API
