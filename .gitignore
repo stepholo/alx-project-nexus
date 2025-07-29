@@ -9,3 +9,7 @@ __pycache__/
 
 # Ignore log files
 *.log
+
+# Ignore Migration files
+*.sqlite3
+*_initial.py
