@@ -37,8 +37,6 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = "Categories"
         ordering = ['name']
-        filter_horizontal = ('subcategories',)
-        # Adding indexes for better query performance
         indexes = [
             models.Index(fields=['name']),
             models.Index(fields=['created_at']),
