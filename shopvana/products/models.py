@@ -141,7 +141,9 @@ class ProductManager(models.Manager):
     def search_products(self, query):
         """Search for products by name or description."""
         return self.filter(
-            models.Q(name__icontains=query) | models.Q(description__icontains=query),
+            models.Q(
+                name__icontains=query
+                ) | models.Q(description__icontains=query),
             is_active=True
         )
 
