@@ -2,7 +2,7 @@ from .views import CategoryViewSet, ProductViewSet
 from django.urls import path
 
 
-url_patterns = [
+urlpatterns = [
     path(
         'categories/',
         CategoryViewSet.as_view({'get': 'list', 'post': 'create'}),
