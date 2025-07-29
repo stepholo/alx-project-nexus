@@ -24,25 +24,29 @@ class CategorySerializer(serializers.ModelSerializer):
         def validate_parent_category(self, value: Category) -> Category:
             """Ensure that the parent category is not a child of itself."""
             if value and value == self.instance:
-                raise serializers.ValidationError("A category cannot be its own parent.")
+                raise serializers.ValidationError(
+                    "A category cannot be its own parent.")
             return value
 
         def validate_description(self, value: str) -> str:
             """Ensure that the description is not too long."""
             if len(value) > 1000:
-                raise serializers.ValidationError("Description is too long. Maximum length is 1000 characters.")
+                raise serializers.ValidationError(
+                    "Description is too long. Max length is 1000 characters.")
             return value
 
         def validate_name(self, value: str) -> str:
             """Ensure that the name is not too long."""
             if len(value) > 255:
-                raise serializers.ValidationError("Name is too long. Maximum length is 255 characters.")
+                raise serializers.ValidationError(
+                    "Name is too long. Maximum length is 255 characters.")
             return value
 
         def validate(self, attrs: dict) -> dict:
             """Ensure that the name is unique."""
             if Category.objects.filter(name=attrs['name']).exists():
-                raise serializers.ValidationError("Category with this name already exists.")
+                raise serializers.ValidationError(
+                    "Category with this name already exists.")
             return attrs
 
 
@@ -67,35 +71,41 @@ class ProductSerializer(serializers.ModelSerializer):
         def validate_name(self, value: str) -> str:
             """Ensure that the name is not too long."""
             if len(value) > 255:
-                raise serializers.ValidationError("Name is too long. Maximum length is 255 characters.")
+                raise serializers.ValidationError(
+                    "Name is too long. Maximum length is 255 characters.")
             return value
 
         def validate_description(self, value: str) -> str:
             """Ensure that the description is not too long."""
             if len(value) > 1000:
-                raise serializers.ValidationError("Description is too long. Maximum length is 1000 characters.")
+                raise serializers.ValidationError(
+                    "Description is too long. Max length is 1000 characters.")
             return value
 
         def validate_price(self, value: float) -> float:
             """Ensure that the price is a positive number."""
             if value < 0:
-                raise serializers.ValidationError("Price must be a positive number.")
+                raise serializers.ValidationError(
+                    "Price must be a positive number.")
             return value
 
         def validate_stock_quantity(self, value: int) -> int:
             """Ensure that the stock quantity is a non-negative integer."""
             if value < 0:
-                raise serializers.ValidationError("Stock quantity must be a non-negative integer.")
+                raise serializers.ValidationError(
+                    "Stock quantity must be a non-negative integer.")
             return value
 
         def validate(self, attrs: dict) -> dict:
             """Ensure that the product name is unique within the category."""
-            if Product.objects.filter(name=attrs['name'], category=attrs['category']).exists():
-                raise serializers.ValidationError("Product with this name already exists in the selected category.")
+            if Product.objects.filter(
+                    name=attrs['name'], category=attrs['category']).exists():
+                raise serializers.ValidationError(
+                    "Product with this name already exists.")
             return attrs
 
         def to_representation(self, instance: Product) -> dict:
             """Customize the representation of the product."""
-            representation = super().to_representation(instance)
-            representation['category'] = CategorySerializer(instance.category).data
-            return representation
+            represent = super().to_representation(instance)
+            represent['category'] = CategorySerializer(instance.category).data
+            return represent
