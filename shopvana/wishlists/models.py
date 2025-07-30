@@ -11,7 +11,7 @@ class Wishlist(models.Model):
         'products.Product', on_delete=models.CASCADE, related_name='wishlists'
         )
     user = models.ForeignKey(
-        'User', on_delete=models.CASCADE, related_name='wishlists'
+        'users.User', on_delete=models.CASCADE, related_name='wishlists'
         )
     name = models.CharField(max_length=255, unique=True)
     added_on = models.DateTimeField(auto_now_add=True)
@@ -49,7 +49,7 @@ class WishlistItem(models.Model):
         related_name='wishlist_items'
         )
     user_id = models.ForeignKey(
-        'User', on_delete=models.CASCADE, related_name='wishlist_items'
+        'users.User', on_delete=models.CASCADE, related_name='wishlist_items'
         )
     added_on = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
