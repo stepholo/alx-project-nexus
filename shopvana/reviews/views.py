@@ -14,12 +14,18 @@ class ReviewViewSet(viewsets.ModelViewSet):
         """Override to set the user_id from the request user."""
         serializer.save(user_id=self.request.user)
 
-    def get_queryset(self) -> dict:
-        """Filter reviews by product_id if provided in the query parameters."""
-        product_id = self.request.query_params.get('product_id')
-        if product_id:
-            return self.queryset.filter(product_id=product_id)
-        return self.queryset
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        product_id = self.kwargs.get('product')
+        user_id = self.kwargs.get('user')
+
+        if product_id and user_id:
+            return queryset.filter(product_id=product_id, user_id=user_id)
+        elif product_id:
+            return queryset.filter(product_id=product_id)
+        elif user_id:
+            return queryset.filter(user_id=user_id)
+        return queryset
 
     def get_serializer_context(self) -> dict:
         """Add additional context to the serializer."""
