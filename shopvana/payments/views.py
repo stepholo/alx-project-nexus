@@ -32,9 +32,3 @@ class PaymentViewSet(viewsets.ModelViewSet):
         if user.is_authenticated:
             return self.queryset.filter(user=user)
         return self.queryset.none()
-
-    def list(self, request, *args, **kwargs):
-        """Override to customize the list response."""
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)

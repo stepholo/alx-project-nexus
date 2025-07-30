@@ -4,7 +4,6 @@ from django.urls import path
 """Payment URLs for the Shopvana application.
 This module defines the URL patterns for the Payment API endpoints,
 allowing clients to interact with payment resources.
-It includes endpoints for listing, creating, retrieving, updating, and deleting payment records.
 """
 
 urlpatterns = [
