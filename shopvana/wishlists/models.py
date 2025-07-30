@@ -23,7 +23,6 @@ class Wishlist(models.Model):
     class Meta:
         verbose_name_plural = "Wishlists"
         ordering = ['-added_on']
-        fields = ['name', 'user_id', 'added_on', 'updated_at']
         indexes = [
             models.Index(fields=['user_id']),
             models.Index(fields=['added_on']),
@@ -61,7 +60,6 @@ class WishlistItem(models.Model):
     class Meta:
         verbose_name_plural = "Wishlist Items"
         ordering = ['-added_on']
-        fields = ['wishlist', 'product_id', 'user_id', 'added_on', 'updated_at']
         indexes = [
             models.Index(fields=['wishlist']),
             models.Index(fields=['product_id']),
