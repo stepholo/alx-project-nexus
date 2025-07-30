@@ -37,4 +37,5 @@ urlpatterns = [
     path('api/', include('reviews.urls')),
     path('api/', include('wishlists.urls')),
     path('api/', include('orders.urls')),
+    path('api/', include('cart.urls')),
 ]
