@@ -4,9 +4,19 @@ from uuid import uuid4
 
 class Review(models.Model):
     """Model representing a product review."""
-    review_id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    product_id = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='reviews')
-    user_id = models.ForeignKey('User', on_delete=models.CASCADE, related_name='reviews')
+    review_id = models.UUIDField(
+        primary_key=True, default=uuid4, editable=False
+    )
+    product_id = models.ForeignKey(
+        'products.Product',  # Update to the correct app and model
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    user_id = models.ForeignKey(
+        'users.User',  # Use Django's user model
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
     rating = models.PositiveIntegerField()
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -30,4 +40,4 @@ class Review(models.Model):
         ]
 
     def __str__(self):
-        return f'Review {self.id} for Product {self.product_id}'
+        return f'Review {self.review_id} for Product {self.product_id}'
