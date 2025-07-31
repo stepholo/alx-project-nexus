@@ -23,6 +23,7 @@ class Wishlist(models.Model):
     class Meta:
         verbose_name_plural = "Wishlists"
         ordering = ['-added_on']
+        db_table = 'shopvana_wishlist'
         indexes = [
             models.Index(fields=['user_id']),
             models.Index(fields=['added_on']),
