@@ -27,6 +27,7 @@ class Review(models.Model):
         verbose_name_plural = 'Reviews'
         ordering = ['-created_at']
         unique_together = ('product_id', 'user_id')
+        db_table = 'shopvana_review'
         indexes = [
             models.Index(fields=['product_id']),
             models.Index(fields=['user_id']),
