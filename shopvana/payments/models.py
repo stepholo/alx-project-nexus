@@ -51,6 +51,7 @@ class Payment(models.Model):
         verbose_name = 'Payment'
         verbose_name_plural = 'Payments'
         ordering = ['-created_at']
+        db_table = 'shopvana_payment'
         indexes = [
             models.Index(fields=['status']),
             models.Index(fields=['created_at']),
