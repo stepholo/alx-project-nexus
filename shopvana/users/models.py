@@ -94,6 +94,7 @@ class User(AbstractUser):
         verbose_name = "User"
         verbose_name_plural = "Users"
         ordering = ['-date_joined']
+        db_table = 'shopvana_user'
         indexes = [
             models.Index(fields=['email'], name='user_email_idx'),
             models.Index(fields=['date_joined'], name='user_date_joined_idx'),
