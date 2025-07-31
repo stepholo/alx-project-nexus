@@ -73,6 +73,7 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = "Categories"
         ordering = ['name']
+        db_table = 'shopvana_category'
         indexes = [
             models.Index(fields=['name']),
             models.Index(fields=['created_at']),
@@ -138,7 +139,7 @@ class Product(models.Model):
     class Meta:
         verbose_name_plural = "Products"
         ordering = ['name']
-        # Adding indexes for better query performance
+        db_table = 'shopvana_product'
         indexes = [
             models.Index(fields=['name']),
             models.Index(fields=['price']),
