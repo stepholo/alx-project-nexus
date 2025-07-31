@@ -40,7 +40,6 @@ class OrderItem(models.Model):
         )
     product = models.ForeignKey('products.Product', on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
-    price_at_purchase = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         verbose_name = 'Order Item'
