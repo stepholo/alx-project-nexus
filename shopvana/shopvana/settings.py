@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'drf_yasg',
+    'django_daraja',
 
     'users',
     'products',
@@ -58,6 +59,7 @@ INSTALLED_APPS = [
     'orders',
     'cart',
     'payments',
+    'utils',
 ]
 
 MIDDLEWARE = [
@@ -205,3 +207,59 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND')
 CELERY_TIMEZONE = 'UTC'
+
+# Mpesa settings
+MPESA_ENVIRONMENT = env('MPESA_ENVIRONMENT')
+MPESA_CONSUMER_KEY = env('MPESA_CONSUMER_KEY')
+MPESA_CONSUMER_SECRET = env('MPESA_CONSUMER_SECRET')
+MPESA_EXPRESS_SHORTCODE = env('MPESA_EXPRESS_SHORTCODE')
+MPESA_SHORTCODE_TYPE = env('MPESA_SHORTCODE_TYPE')
+MPESA_SHORTCODE = env('MPESA_SHORTCODE')
+MPESA_PASSKEY = env('MPESA_PASSKEY')
+
+# Logging Settings
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name} ({module}:{lineno}) - {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',  # Choose verbose or simple
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': 'django_debug.log',
+            'formatter': 'verbose',
+        },
+    },
+
+    'root': {  # Root logger (catches everything)
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
+
+    'loggers': {
+        'django': {  # Django framework logs
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'myapp': {  # Your custom app logs
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
