@@ -8,7 +8,7 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = ['category_id', 'created_at', 'updated_at']
         extra_kwargs = {
             'parent_category': {'required': False, 'allow_null': True}
         }
@@ -21,28 +21,28 @@ class CategorySerializer(serializers.ModelSerializer):
             )
         ]
 
-        def validate_parent_category(self, value: Category) -> Category:
+    def validate_parent_category(self, value: Category) -> Category:
             """Ensure that the parent category is not a child of itself."""
             if value and value == self.instance:
                 raise serializers.ValidationError(
                     "A category cannot be its own parent.")
             return value
 
-        def validate_description(self, value: str) -> str:
+    def validate_description(self, value: str) -> str:
             """Ensure that the description is not too long."""
             if len(value) > 1000:
                 raise serializers.ValidationError(
                     "Description is too long. Max length is 1000 characters.")
             return value
 
-        def validate_name(self, value: str) -> str:
+    def validate_name(self, value: str) -> str:
             """Ensure that the name is not too long."""
             if len(value) > 255:
                 raise serializers.ValidationError(
                     "Name is too long. Maximum length is 255 characters.")
             return value
 
-        def validate(self, attrs: dict) -> dict:
+    def validate(self, attrs: dict) -> dict:
             """Ensure that the name is unique."""
             if Category.objects.filter(name=attrs['name']).exists():
                 raise serializers.ValidationError(
@@ -52,6 +52,12 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     """Serializer for Product model."""
+
+    category = serializers.SlugRelatedField(
+        slug_field='name',
+        queryset=Category.objects.all(),
+        help_text="Category to which the product belongs"
+    )
 
     class Meta:
         model = Product

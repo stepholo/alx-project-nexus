@@ -24,11 +24,11 @@ class ProductAdmin(admin.ModelAdmin):
         if change:
             # If the product is being updated, check stock changes
             original = Product.objects.get(pk=obj.pk)
-            if original.stock != obj.stock:
+            if original.stock_quantity != obj.stock_quantity:
                 # Handle stock changes if necessary
                 obj.updated_at = timezone.now()
                 print(
-                    f"Stock updated for {obj.name}: {original.stock} -> {obj.stock}"
+                    f"Stock updated for {obj.name}: {original.stock_quantity} -> {obj.stock_quantity}"
                 )
         super().save_model(request, obj, form, change)
 
@@ -36,13 +36,13 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     """Admin interface for managing product categories."""
-    list_display = ('name', 'parent_category', 'created_at')
+    list_display = ('name', 'category_id', 'created_at')
     search_fields = ('name',)
     ordering = ('-created_at',)
 
     def get_queryset(self, request):
         """Override to use custom manager for active categories."""
-        return Category.objects.active_categories()
+        return super().get_queryset(request)
 
     def save_model(self, request, obj, form, change):
         """Custom save method to handle category updates."""
