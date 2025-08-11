@@ -1,9 +1,9 @@
 from .models import Review
-from orders.models import OrderItem
 from .serializers import ReviewSerializer
 from rest_framework import viewsets, serializers
+from drf_yasg.utils import swagger_auto_schema
 
-
+@swagger_auto_schema(tags=["Reviews"])
 class ReviewViewSet(viewsets.ModelViewSet):
     """ViewSet for handling product reviews."""
 

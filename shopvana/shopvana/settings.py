@@ -40,6 +40,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -189,7 +190,9 @@ SWAGGER_SETTINGS = {
             'name': 'Authorization',
             'description': 'JWT Authorization header using the Bearer scheme. Example: "Authorization: Bearer <token>"'
         }
-    }
+    },
+    'TAGS_SORTER': None,
+    'OPERATIONS_SORTER': None,
 }
 
 # Email settings
@@ -262,4 +265,44 @@ LOGGING = {
             'propagate': False,
         },
     },
+}
+
+
+# Jazzmin Settings
+JAZZMIN_SETTINGS = {
+    "site_title": "My Custom Admin",
+    "site_header": "Custom Header",
+    "welcome_sign": "Welcome to the Admin",
+    "topmenu_links": [
+        {"name": "Home", "url": "admin:index", "permissions": ["auth.view_user"]},
+    ],
+    "usermenu_links": [
+        {"name": "Support", "url": "https://example.com/support", "new_window": True},
+    ],
+    "changeform_format": "horizontal_tabs",  # Options: single, horizontal_tabs, vertical_tabs, carousel, collapsible
+    "custom_css": "admin/css/custom.css",  # For further styling
+    "show_ui_builder": True,
+    "order_with_respect_to": [
+        "users",
+        "products",
+        "wishlists",
+        "cart",
+        "orders",
+        "payments",
+        "reviews",
+    ],
+
+    # Optional: Custom icons for apps
+    "icons": {
+        "users": "fas fa-user",
+        "products": "fas fa-box",
+        "wishlists": "fas fa-heart",
+        "cart": "fas fa-shopping-cart",
+        "orders": "fas fa-receipt",
+        "payments": "fas fa-credit-card",
+        "reviews": "fas fa-star",
+    },
+
+    # Expand menu by default
+    "navigation_expanded": True,
 }

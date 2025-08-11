@@ -1,8 +1,9 @@
 from .models import Wishlist, WishlistItem
 from .serializers import WishlistSerializer, WishlistItemSerializer
 from rest_framework import viewsets
+from drf_yasg.utils import swagger_auto_schema
 
-
+@swagger_auto_schema(tags=["Customer's Preference"])
 class WishlistViewSet(viewsets.ModelViewSet):
     """ViewSet for managing user wishlists."""
     queryset = Wishlist.objects.all()
@@ -29,6 +30,7 @@ class WishlistViewSet(viewsets.ModelViewSet):
             raise PermissionError("You do not have permission to delete this wishlist.")
 
 
+@swagger_auto_schema(tags=["Customer's Preference"])
 class WishlistItemViewSet(viewsets.ModelViewSet):
     """ViewSet for managing items in user wishlists."""
     queryset = WishlistItem.objects.all()
