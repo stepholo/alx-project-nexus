@@ -1,24 +1,27 @@
-from .models import CartItem
-from .serializers import CartItemSerializer
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-
+from .models import CartItem
+from .serializers import CartItemSerializer
 
 class CartItemViewSet(viewsets.ModelViewSet):
-    """Viewset for managing Cart Item"""
-
+    """Viewset for managing Cart Items"""
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    def get_queryset(self):
+        # Return only cart items for the authenticated user
+        return CartItem.objects.filter(user=self.request.user)
+
     def perform_create(self, serializer):
-        """Custom behavior on create."""
-        serializer.save()
+        """Auto-increment quantity if the item already exists in cart"""
+        user = self.request.user
+        product = serializer.validated_data['product']
+        quantity = serializer.validated_data['quantity']
 
-    def perform_update(self, serializer):
-        """Custom behavior on update."""
-        serializer.save()
-
-    def perform_destroy(self, instance):
-        """Custom behavior on delete."""
-        instance.delete()
+        existing_item = CartItem.objects.filter(user=user, product=product).first()
+        if existing_item:
+            existing_item.quantity += quantity
+            existing_item.save()
+        else:
+            serializer.save(user=user)
