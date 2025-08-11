@@ -7,7 +7,7 @@ urlpatterns = [
     path('users/', UserViewSet.as_view(
         {'get': 'list', 'post': 'create'}),
         name='user-list'),
-    path('users/<uuid:user_id>/', UserViewSet.as_view(
+    path('users/<uuid:id>/', UserViewSet.as_view(
         {'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}),
         name='user-detail'),
 ]

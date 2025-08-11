@@ -1,5 +1,6 @@
 from .serializers import UserSerializer
 from .models import User
+from utils.email import send_notification_email
 from rest_framework import viewsets, permissions, filters
 
 
@@ -9,7 +10,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    lookup_field = 'user_id'
+    lookup_field = 'id'
     permission_classes = [permissions.IsAuthenticated]
     search_fields = ['email', 'username', 'first_name', 'last_name']
     filter_backends = [filters.SearchFilter]
@@ -24,3 +25,22 @@ class UserViewSet(viewsets.ModelViewSet):
         if role is not None:
             queryset = queryset.filter(role=role)
         return queryset
+
+    def perform_create(self, serializer: UserSerializer) -> None:
+        """
+        Save the new user instance and send a welcome email.
+        """
+        user = serializer.save()
+        context = {
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'activation_url': f"{self.request.scheme}://{self.request.get_host()}/activate/{user.activation_token}/"
+        }
+
+        send_notification_email(
+            subject='Welcome to Our Store!',
+            template_name='template/emails/account_activation.html',
+            context=context,
+            to_email=user.email
+        )
