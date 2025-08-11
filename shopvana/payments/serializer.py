@@ -7,10 +7,38 @@ class PaymentSerializer(serializers.ModelSerializer):
     This serializer handles the conversion of Payment model instances to JSON
     and vice versa, including validation of fields.
     """
+    phone_number = serializers.CharField(write_only=True, required=False)
+
     class Meta:
         model = Payment
-        fields = '__all__'
-        read_only_fields = ('transaction_id', 'created_at', 'updated_at')
+        fields = (
+            'transaction_id', 'amount', 'currency',
+            'payment_method', 'order', 'user', 'status',
+            'phone_number', 'created_at', 'updated_at',
+            'checkout_request_id', 'wallet'
+        )
+        read_only_fields = ('transaction_id', 'user', 'checkout_request_id', 'wallet', 'created_at', 'updated_at')
+        extra_kwargs = {
+            'status': {'default': 'pending'},
+            'currency': {'default': 'KSH'},
+            'payment_method': {'default': 'mpesa'},
+        }
+
+    def create(self, validated_data):
+        """Override create method to handle custom logic."""
+        validated_data.pop('phone_number', None)  # Remove the non-model field
+        return super().create(validated_data)
+
+    def validate(self, data):
+        if data.get('payment_method') == 'mpesa':
+            if not data.get('phone_number'):
+                raise serializers.ValidationError("Phone number is required for M-Pesa payments.")
+
+            phone = data['phone_number']
+            if not (phone.startswith('07') or phone.startswith('+254')) or len(phone) < 10:
+                raise serializers.ValidationError("Invalid phone number format for M-Pesa.")
+        return data
+
 
     def validate_amount(self, value):
         """Ensure that the payment amount is positive."""
@@ -39,12 +67,12 @@ class PaymentSerializer(serializers.ModelSerializer):
 
     def validate_payment_method(self, value):
         """Ensure that the payment method is one of the allowed values."""
-        valid_methods = [
-            'credit_card', 'mpesa',
-            'Airtel Money', 'bank_transfer'
-            ]
+        valid_methods = {
+            'mpesa': 'mpesa',
+            'wallet': 'wallet'
+        }
         if value not in valid_methods:
             raise serializers.ValidationError(
-                f"Payment method must be one of {valid_methods}."
-                )
+                f"Payment method must be one of {list(valid_methods.keys())}."
+            )
         return value
