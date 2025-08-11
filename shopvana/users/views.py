@@ -2,8 +2,9 @@ from .serializers import UserSerializer
 from .models import User
 from utils.email import send_notification_email
 from rest_framework import viewsets, permissions, filters
+from drf_yasg.utils import swagger_auto_schema
 
-
+@swagger_auto_schema(tags=["Users"])
 class UserViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing user instances.

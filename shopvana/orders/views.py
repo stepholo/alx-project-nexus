@@ -8,8 +8,9 @@ from cart.models import CartItem
 from products.models import Product
 from utils.email import send_notification_email
 from .serializers import OrderSerializer, OrderItemSerializer
+from drf_yasg.utils import swagger_auto_schema
 
-
+@swagger_auto_schema(tags=["Customer's Preference"])
 class OrderViewSet(viewsets.ModelViewSet):
     """ViewSet for managing orders."""
 
@@ -115,6 +116,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         instance.delete()
 
 
+@swagger_auto_schema(tags=["Customer's Preference"])
 class OrderItemViewSet(viewsets.ModelViewSet):
     """ViewSet for managing order items."""
 

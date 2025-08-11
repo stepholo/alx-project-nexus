@@ -10,10 +10,13 @@ from rest_framework.response import Response
 import logging
 import uuid
 from time import sleep
+from drf_yasg.utils import swagger_auto_schema
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+@swagger_auto_schema(tags=["Payments"])
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
@@ -102,6 +105,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
         logger.info(f"[SIMULATION] Sending simulated callback: {callback_data}")
         MpesaCallbackView().process_callback(callback_data)
 
+@swagger_auto_schema(tags=["Payments"])
 class MpesaCallbackView(APIView):
     permission_classes = []  # Open to M-Pesa servers (add IP whitelist later)
 

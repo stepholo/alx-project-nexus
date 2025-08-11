@@ -2,7 +2,9 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .models import CartItem
 from .serializers import CartItemSerializer
+from drf_yasg.utils import swagger_auto_schema
 
+@swagger_auto_schema(tags=["Customer's Preference"])
 class CartItemViewSet(viewsets.ModelViewSet):
     """Viewset for managing Cart Items"""
     queryset = CartItem.objects.all()

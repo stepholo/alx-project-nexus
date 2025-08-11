@@ -2,8 +2,9 @@ from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
 from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from drf_yasg.utils import swagger_auto_schema
 
-
+@swagger_auto_schema(tags=["Product Cartegory"])
 class CategoryViewSet(viewsets.ModelViewSet):
     """ViewSet for managing product categories."""
     queryset = Category.objects.all()
@@ -23,6 +24,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
         instance.delete()
 
 
+@swagger_auto_schema(tags=["Products"])
 class ProductViewSet(viewsets.ModelViewSet):
     """ViewSet for managing products."""
     queryset = Product.objects.all()
