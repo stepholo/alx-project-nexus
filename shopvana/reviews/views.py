@@ -1,6 +1,7 @@
 from .models import Review
+from orders.models import OrderItem
 from .serializers import ReviewSerializer
-from rest_framework import viewsets
+from rest_framework import viewsets, serializers
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -11,18 +12,29 @@ class ReviewViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
     def perform_create(self, serializer: ReviewSerializer) -> None:
-        """Override to set the user_id from the request user."""
-        serializer.save(user_id=self.request.user)
+        """Allow reviews only for paid order items, one per user per item."""
+        order_item = serializer.validated_data['order_id']
+
+        if order_item.order.status != 'paid':
+            raise serializers.ValidationError("You can only review items from paid orders.")
+
+        if Review.objects.filter(order_id=order_item, user_id=self.request.user).exists():
+            raise serializers.ValidationError("You have already reviewed this item.")
+
+        serializer.save(
+            user_id=self.request.user,
+            order_id=order_item
+        )
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        product_id = self.kwargs.get('product')
+        id = self.kwargs.get('id')
         user_id = self.kwargs.get('user')
 
-        if product_id and user_id:
-            return queryset.filter(product_id=product_id, user_id=user_id)
-        elif product_id:
-            return queryset.filter(product_id=product_id)
+        if id and user_id:
+            return queryset.filter(order_id=id, user_id=user_id)
+        elif id:
+            return queryset.filter(order_id=id)
         elif user_id:
             return queryset.filter(user_id=user_id)
         return queryset
