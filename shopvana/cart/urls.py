@@ -15,7 +15,7 @@ urlpatterns = [
         name='cart-item-list'
         ),
     path(
-        'cart-items/<int:pk>/',
+        'cart-items/<uuid:pk>/',
         CartItemViewSet.as_view({
             'get': 'retrieve', 'put': 'update',
             'delete': 'destroy'

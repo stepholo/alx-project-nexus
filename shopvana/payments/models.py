@@ -7,16 +7,6 @@ class Payment(models.Model):
     Represents a payment transaction in the Shopvana system.
     This model captures details about the payment such as amount, currency,
     payment method, associated order, user information, and status.
-    Attributes:
-        transaction_id (UUID): Unique identifier for the payment transaction.
-        amount (Decimal): The amount of the payment.
-        currency (str): The currency of the payment, e.g., 'USD', 'KES'.
-        payment_method (str): The method used for the payment,
-        order (ForeignKey): Reference to the associated order.
-        user (ForeignKey): Reference to the user making the payment.
-        status (str): The status of the payment
-        created_at (DateTimeField): Timestamp when the payment was created.
-        updated_at (DateTimeField): Timestamp when the payment was last
     """
     transaction_id = models.UUIDField(
         primary_key=True, default=uuid4, editable=False
@@ -24,10 +14,8 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     currency = models.CharField(max_length=3)
     payment_method = models.CharField(max_length=50, choices=[
-        ('credit_card', 'Credit Card'),
-        ('mpesa', 'M-Pesa'),
-        ('Airtel Money', 'Airtel Money'),
-        ('bank_transfer', 'Bank Transfer'),
+        ('mpesa', 'mpesa'),
+        ('wallet', 'wallet'),
     ])
     order = models.ForeignKey(
         'orders.Order', on_delete=models.CASCADE,
@@ -44,8 +32,16 @@ class Payment(models.Model):
         ('failed', 'Failed'),
         ('refunded', 'Refunded')
     ])
+    wallet = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    checkout_request_id = models.CharField(max_length=100, blank=True, null=True)
+    mpesa_receipt_number = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def id(self):
+        """Return the payment ID."""
+        return self.transaction_id
 
     class Meta:
         verbose_name = 'Payment'

@@ -9,7 +9,7 @@ urlpatterns = [
         name='category-list'
     ),
     path(
-        'categories/<int:pk>/',
+        'categories/<uuid:pk>/',
         CategoryViewSet.as_view({'get': 'retrieve',
                                  'put': 'update',
                                  'delete': 'destroy'}),
@@ -21,7 +21,7 @@ urlpatterns = [
         name='product-list'
     ),
     path(
-        'products/<int:pk>/',
+        'products/<uuid:pk>/',
         ProductViewSet.as_view({
             'get': 'retrieve',
             'put': 'update',

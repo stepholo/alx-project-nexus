@@ -1,36 +1,65 @@
 from .models import Order, OrderItem
 from rest_framework import serializers
 from products.serializers import ProductSerializer
+from products.models import Product
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
     """Serializer for OrderItem model."""
 
-    product = ProductSerializer(read_only=True)
+    order = serializers.PrimaryKeyRelatedField(
+        queryset=Order.objects.all(),
+        help_text="Order to which the item belongs"
+    )
+    product = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(),
+        help_text="Product for the order item"
+    )
+
 
     class Meta:
         model = OrderItem
-        fields = ['id', 'product', 'quantity', 'price_at_purchase']
-        read_only_fields = ['id', 'product', 'price_at_purchase']
+        fields = ['id', 'order', 'product', 'quantity', 'item_status']
+        read_only_fields = ['id', 'item_status']
+        extra_kwargs = {
+            'order': {'required': True},
+            'product': {'required': True}
+        }
 
-    def create(self, validated_data):
-        """Create a new OrderItem instance."""
-        return OrderItem.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        """Update an existing OrderItem instance."""
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
-        return instance
+    def validate(self, attrs):
+        print(f"Incoming data: {self.initial_data}")
+        print(f"Validated data: {attrs}")
+        return super().validate(attrs)
 
     def validate_quantity(self, value):
         """Ensure quantity is a positive integer."""
         if value <= 0:
             raise serializers.ValidationError(
                 "Quantity must be a positive integer."
-                )
+            )
         return value
+
+    def validate_order(self, value):
+        return value
+
+    def validate_product(self, value):
+        """Ensure the product exists and has sufficient stock."""
+        quantity = self.initial_data.get('stock_quantity', 0)
+        try:
+            quantity = int(quantity)
+        except Exception:
+            quantity = 0
+        if value.stock_quantity < self.initial_data.get('quantity', 0):
+            raise serializers.ValidationError(
+                f"Product {value.name} is oversold. Available stock: {value.stock_quantity}."
+            )
+        return value
+
+    def to_representation(self, instance):
+        """Customize the representation to include full product details."""
+        representation = super().to_representation(instance)
+        representation['product'] = ProductSerializer(instance.product).data
+        return representation
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -43,10 +72,10 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = [
             'order_id', 'user', 'total_amount',
             'status', 'shipping_address', 'ordered_at', 'items'
-            ]
+        ]
         read_only_fields = [
             'order_id', 'user', 'total_amount', 'status', 'ordered_at'
-            ]
+        ]
         extra_kwargs = {
             'shipping_address': {'required': True},
             'status': {'default': 'pending'}
@@ -85,16 +114,30 @@ class OrderSerializer(serializers.ModelSerializer):
         if not value:
             raise serializers.ValidationError(
                 "Shipping address cannot be empty."
+            )
+        return value
+
+    def validate_amount(self, value):
+        """Ensure amount is a positive number and is equal to order amount."""
+        if value <= 0:
+            raise serializers.ValidationError(
+                "Amount must be a positive number."
+            )
+        if 'total_amount' in self.initial_data:
+            total_amount = self.initial_data.get('total_amount', 0)
+            if value != total_amount:
+                raise serializers.ValidationError(
+                    "Amount must match the total amount of the order."
                 )
         return value
 
     def validate_status(self, value):
-        """Ensure status is a valid choice."""
+        """Ensure status is a valid choice ."""
         valid_statuses = dict(Order.STATUS_CHOICES).keys()
         if value not in valid_statuses:
             raise serializers.ValidationError(
                 f"Status must be one of {', '.join(valid_statuses)}."
-                )
+            )
         return value
 
     def to_representation(self, instance):

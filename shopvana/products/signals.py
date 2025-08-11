@@ -9,10 +9,10 @@ def update_product_stock(sender, instance, created, **kwargs):
     """Signal to update product stock when an OrderItem is saved."""
     if created:
         # Decrease stock when an order item is created
-        instance.product.stock -= instance.quantity
+        instance.product.stock_quantity -= instance.quantity
         instance.product.save()
     else:
         # If the order item is updated, adjust stock accordingly
         original_quantity = instance.__class__.objects.get(pk=instance.pk).quantity
-        instance.product.stock += original_quantity - instance.quantity
+        instance.product.stock_quantity += original_quantity - instance.quantity
         instance.product.save()

@@ -5,7 +5,7 @@ from uuid import uuid4
 
 class User(AbstractUser):
     """Custom user model for Shopvana."""
-    user_id = models.UUIDField(
+    id = models.UUIDField(
         default=uuid4,
         editable=False,
         unique=True,
@@ -59,11 +59,12 @@ class User(AbstractUser):
         blank=True,
         help_text="Date and time of the user's last login."
     )
-    password = models.CharField(
-        max_length=128,
-        help_text="Password for the user account."
+    activation_token = models.UUIDField(
+        default=uuid4,
+        editable=False,
+        unique=True,
+        help_text="Unique token for user activation."
     )
-
     profile_picture = models.ImageField(
         upload_to='profile_pictures/',
         null=True,
@@ -89,6 +90,11 @@ class User(AbstractUser):
     def __str__(self):
         """Return a string representation of the user."""
         return f'{self.first_name} {self.last_name} ({self.email})'
+
+    '''@property
+    def id(self):
+        """Return the unique identifier for the user."""
+        return self.user_id'''
 
     class Meta:
         verbose_name = "User"

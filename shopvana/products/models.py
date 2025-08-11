@@ -38,13 +38,12 @@ class CategoryManager(models.Manager):
 
 class Category(models.Model):
     """Model representing a product category."""
-    parent_category = models.ForeignKey(
+    category_id = models.UUIDField(
         'self',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='subcategories',
-        help_text="Parent category for subcategories"
+        primary_key=True,
+        default=uuid4,
+        unique=True,
+        help_text="Product category identifier"
     )
     name = models.CharField(
         max_length=255,
@@ -65,6 +64,11 @@ class Category(models.Model):
     )
 
     objects = CategoryManager()  # <-- define inside the class
+
+    @property
+    def id(self):
+        """Return the category ID."""
+        return self.category_id
 
     def __str__(self):
         """String representation of the category."""
@@ -131,6 +135,11 @@ class Product(models.Model):
     )
 
     objects = ProductManager()
+
+    @property
+    def id(self):
+        """Return the product ID."""
+        return self.product_id
 
     def __str__(self):
         """String representation of the product."""

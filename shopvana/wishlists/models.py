@@ -7,9 +7,6 @@ class Wishlist(models.Model):
     wishlist_id = models.UUIDField(
         primary_key=True, default=uuid4, editable=False
         )
-    product = models.ForeignKey(
-        'products.Product', on_delete=models.CASCADE, related_name='wishlists'
-        )
     user = models.ForeignKey(
         'users.User', on_delete=models.CASCADE, related_name='wishlists'
         )
@@ -19,6 +16,10 @@ class Wishlist(models.Model):
 
     def __str__(self) -> str:
         return f"Wishlist {self.wishlist_id} for User {self.user.username}"
+
+    @property
+    def id(self):
+        return self.wishlist_id
 
     class Meta:
         verbose_name_plural = "Wishlists"
@@ -31,7 +32,7 @@ class Wishlist(models.Model):
         ]
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'product'],
+                fields=['user', 'name'],
                 name='unique_wishlist_item_per_user'
             )
         ]
@@ -45,31 +46,36 @@ class WishlistItem(models.Model):
     wishlist = models.ForeignKey(
         Wishlist, on_delete=models.CASCADE, related_name='items'
         )
-    product_id = models.ForeignKey(
+    product = models.ForeignKey(
         'products.Product', on_delete=models.CASCADE,
         related_name='wishlist_items'
         )
-    user_id = models.ForeignKey(
+    user = models.ForeignKey(
         'users.User', on_delete=models.CASCADE, related_name='wishlist_items'
         )
     added_on = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return f"Item {self.product_id} in {self.wishlist.product.name} Wishlist"
+        return f"Item {self.product.name} in Wishlist '{self.wishlist.name}'"
+
+    @property
+    def id(self):
+        return self.item_id
 
     class Meta:
         verbose_name_plural = "Wishlist Items"
         ordering = ['-added_on']
+        db_table = 'shopvana_wishlist_item'
         indexes = [
             models.Index(fields=['wishlist']),
-            models.Index(fields=['product_id']),
-            models.Index(fields=['user_id']),
+            models.Index(fields=['product']),
+            models.Index(fields=['user']),
             models.Index(fields=['added_on']),
         ]
         constraints = [
             models.UniqueConstraint(
-                fields=['wishlist', 'product_id'],
+                fields=['wishlist', 'product'],
                 name='unique_wishlist_item_per_wishlist'
             )
         ]

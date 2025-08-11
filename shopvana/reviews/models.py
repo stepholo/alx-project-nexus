@@ -7,8 +7,8 @@ class Review(models.Model):
     review_id = models.UUIDField(
         primary_key=True, default=uuid4, editable=False
     )
-    product_id = models.ForeignKey(
-        'products.Product',  # Update to the correct app and model
+    order_id = models.ForeignKey(
+        'orders.OrderItem',  # Update to the correct app and model
         on_delete=models.CASCADE,
         related_name='reviews'
     )
@@ -22,14 +22,19 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def id(self):
+        """Return the review ID."""
+        return self.review_id
+
     class Meta:
         verbose_name = 'Review'
         verbose_name_plural = 'Reviews'
         ordering = ['-created_at']
-        unique_together = ('product_id', 'user_id')
+        unique_together = ('order_id', 'user_id')
         db_table = 'shopvana_review'
         indexes = [
-            models.Index(fields=['product_id']),
+            models.Index(fields=['order_id']),
             models.Index(fields=['user_id']),
             models.Index(fields=['created_at']),
         ]
@@ -41,4 +46,4 @@ class Review(models.Model):
         ]
 
     def __str__(self):
-        return f'Review {self.review_id} for Product {self.product_id}'
+        return f'Review {self.review_id} for Product {self.order_id}'

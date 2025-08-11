@@ -9,6 +9,7 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ('user__username',)
     list_filter = ('status', 'ordered_at')
     ordering = ('-ordered_at',)
+    readonly_fields = ('ordered_at',)
     fieldsets = (
         (None, {
             'fields': ('user', 'status', 'total_amount')
@@ -23,14 +24,15 @@ class OrderAdmin(admin.ModelAdmin):
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     """Admin interface for OrderItem model."""
-    list_display = ('order', 'product', 'quantity')
+    list_display = ('order', 'product', 'quantity', 'item_status')
     search_fields = ('order__user__username', 'product__name')
     raw_id_fields = ('order', 'product')
+    #filter_horizontal = ('order', 'product', 'status')
     autocomplete_fields = ('order', 'product')
     ordering = ('order', 'product')
     fieldsets = (
         (None, {
-            'fields': ('order', 'product', 'quantity')
+            'fields': ('order', 'product', 'quantity', 'status')
         }),
     )
 
