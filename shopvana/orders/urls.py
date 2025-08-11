@@ -5,22 +5,23 @@ from django.urls import path
 urlpatterns = [
     path(
         'orders/',
-        OrderViewSet.as_view({'get': 'list', 'post': 'create'}),
+        OrderViewSet.as_view({'get': 'list'}),
         name='order-list'
         ),
     path(
-        'orders/<uuid:pk>/',
+        'orders/checkout/',
         OrderViewSet.as_view({
-            'get': 'retrieve', 'put': 'update',
-            'patch': 'partial_update', 'delete': 'destroy'
+            'post': 'checkout'
             }),
-        name='order-detail'),
+        name='order-checkout'
+    ),
     path(
         'order-items/',
         OrderItemViewSet.as_view({'get': 'list', 'post': 'create'}),
-        name='order-item-list'),
+        name='order-item-list'
+    ),
     path(
-        'order-items/<int:pk>/',
+        'order-items/<int:id>/',
         OrderItemViewSet.as_view({
             'get': 'retrieve', 'put': 'update',
             'patch': 'partial_update', 'delete': 'destroy'
