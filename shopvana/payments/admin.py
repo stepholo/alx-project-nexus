@@ -5,7 +5,7 @@ from .models import Payment
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
     """Admin interface for managing payments."""
-    list_display = ('transaction_id', 'order', 'amount', 'currency', 'status', 'payment_method', 'wallet', 'created_at')
+    list_display = ('transaction_id', 'order', 'amount', 'currency', 'status', 'payment_method', 'chapa_tx_ref', 'created_at')
     search_fields = ('order__id', 'status')
     list_filter = ('status', 'created_at')
     readonly_fields = ('transaction_id', 'created_at')

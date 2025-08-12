@@ -102,7 +102,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
         send_notification_email(
             subject='Order Confirmation',
-            template_name='template/emails/order_confirmation.html',
+            template_name='emails/order_confirmation.html',
             context=context,
             recipient_list=[self.request.user.email]
         )
