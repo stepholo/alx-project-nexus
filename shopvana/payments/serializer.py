@@ -15,13 +15,13 @@ class PaymentSerializer(serializers.ModelSerializer):
             'transaction_id', 'amount', 'currency',
             'payment_method', 'order', 'user', 'status',
             'phone_number', 'created_at', 'updated_at',
-            'checkout_request_id', 'wallet'
+            'chapa_tx_ref'
         )
-        read_only_fields = ('transaction_id', 'user', 'checkout_request_id', 'wallet', 'created_at', 'updated_at')
+        read_only_fields = ('transaction_id', 'user', 'chapa_tx_ref', 'created_at', 'updated_at')
         extra_kwargs = {
             'status': {'default': 'pending'},
-            'currency': {'default': 'KSH'},
-            'payment_method': {'default': 'mpesa'},
+            'currency': {'default': 'ETB'},
+            'payment_method': {'default': 'chapa_mobile'},
         }
 
     def create(self, validated_data):
@@ -68,8 +68,8 @@ class PaymentSerializer(serializers.ModelSerializer):
     def validate_payment_method(self, value):
         """Ensure that the payment method is one of the allowed values."""
         valid_methods = {
-            'mpesa': 'mpesa',
-            'wallet': 'wallet'
+            'chapa_card': 'Chapa Card',
+            'chapa_mobile': 'Chapa Mobile',
         }
         if value not in valid_methods:
             raise serializers.ValidationError(
