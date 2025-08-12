@@ -14,8 +14,8 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     currency = models.CharField(max_length=3)
     payment_method = models.CharField(max_length=50, choices=[
-        ('mpesa', 'mpesa'),
-        ('wallet', 'wallet'),
+        ('chapa_card', 'Chapa Card'),
+        ('chapa_mobile', 'Chapa Mobile'),
     ])
     order = models.ForeignKey(
         'orders.Order', on_delete=models.CASCADE,
@@ -32,9 +32,7 @@ class Payment(models.Model):
         ('failed', 'Failed'),
         ('refunded', 'Refunded')
     ])
-    wallet = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    checkout_request_id = models.CharField(max_length=100, blank=True, null=True)
-    mpesa_receipt_number = models.CharField(max_length=50, blank=True, null=True)
+    chapa_tx_ref = models.CharField(max_length=50, unique=True, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
