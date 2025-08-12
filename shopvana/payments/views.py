@@ -10,6 +10,7 @@ from utils.email import send_notification_email
 
 logger = logging.getLogger(__name__)
 
+# Chapa Credentials
 CHAPA_API_URL = f"{settings.CHAPA_BASE_URL.rstrip('/')}/transaction/initialize"
 CHAPA_VERIFY_URL = f"{settings.CHAPA_BASE_URL}/transaction/verify/"
 CHAPA_SECRET_KEY = settings.CHAPA_SECRET_KEY
