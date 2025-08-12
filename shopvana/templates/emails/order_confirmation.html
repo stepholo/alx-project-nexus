@@ -1,9 +1,0 @@
-<h2>Thank you for your order, {{ customer_name }}!</h2>
-<p>Your order <strong>#{{ order_id }}</strong> has been received and is being processed.</p>
-<ul>
-  {% for item in items %}
-    <li>{{ item.name }} x {{ item.quantity }}</li>
-  {% endfor %}
-</ul>
-<p>Total: <strong>{{ total }}</strong></p>
-<p>We will notify you once your items have been shipped.</p>
