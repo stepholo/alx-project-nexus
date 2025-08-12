@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'drf_yasg',
-    'django_daraja',
 
     'users',
     'products',
@@ -78,7 +77,7 @@ ROOT_URLCONF = 'shopvana.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -210,15 +209,18 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND')
 CELERY_TIMEZONE = 'UTC'
+CELERY_BEAT_SCHEDULE = {
+    'check-pending-payments-every-3-minutes': {
+        'task': 'utils.tasks.check_pending_payments',
+        'schedule': timedelta(minutes=3),
+    },
+}
 
-# Mpesa settings
-MPESA_ENVIRONMENT = env('MPESA_ENVIRONMENT')
-MPESA_CONSUMER_KEY = env('MPESA_CONSUMER_KEY')
-MPESA_CONSUMER_SECRET = env('MPESA_CONSUMER_SECRET')
-MPESA_EXPRESS_SHORTCODE = env('MPESA_EXPRESS_SHORTCODE')
-MPESA_SHORTCODE_TYPE = env('MPESA_SHORTCODE_TYPE')
-MPESA_SHORTCODE = env('MPESA_SHORTCODE')
-MPESA_PASSKEY = env('MPESA_PASSKEY')
+# Chapa Settings
+CHAPA_SECRET_KEY = env('CHAPA_SECRET_KEY')
+CHAPA_PUBLIC_KEY = env('CHAPA_PUBLIC_KEY')
+CHAPA_BASE_URL = "https://api.chapa.co/v1/"
+SITE_URL = "http://127.0.0.1:8000"
 
 # Logging Settings
 LOGGING = {
@@ -270,7 +272,7 @@ LOGGING = {
 
 # Jazzmin Settings
 JAZZMIN_SETTINGS = {
-    "site_title": "My Custom Admin",
+    "site_title": "Shopvana Admin",
     "site_header": "Custom Header",
     "welcome_sign": "Welcome to the Admin",
     "topmenu_links": [
