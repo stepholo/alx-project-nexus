@@ -32,7 +32,7 @@ class User(AbstractUser):
         help_text="Unique username for the user."
     )
     is_active = models.BooleanField(
-        default=True,
+        default=False,
         help_text="Indicates whether the user account is active."
     )
     is_staff = models.BooleanField(
@@ -41,8 +41,7 @@ class User(AbstractUser):
     )
     ROLE_CHOICES = (
         ('admin', 'Admin'),
-        ('customer', 'Customer'),
-        ('vendor', 'Vendor'),
+        ('customer', 'Customer')
     )
     role = models.CharField(
         max_length=10,
@@ -90,11 +89,6 @@ class User(AbstractUser):
     def __str__(self):
         """Return a string representation of the user."""
         return f'{self.first_name} {self.last_name} ({self.email})'
-
-    '''@property
-    def id(self):
-        """Return the unique identifier for the user."""
-        return self.user_id'''
 
     class Meta:
         verbose_name = "User"

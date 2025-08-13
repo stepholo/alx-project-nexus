@@ -1,4 +1,22 @@
-<p>Hello {{ user_name }},</p>
-<p>Your payment is almost complete. Please use the link below to finish your payment:</p>
-<p><a href="{{ checkout_url }}">{{ checkout_url }}</a></p>
-<p>Thank you for shopping with us!</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Complete Your Payment</title>
+</head>
+<body>
+    <p>Hello {{ user_name }},</p>
+    <p>Your payment is almost complete. Please use the link below to finish your payment:</p>
+    <p>
+        <a href="{{ checkout_url }}" style="background-color:#4CAF50;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">
+            Complete Payment
+        </a>
+    </p>
+    <p>You have {{ payment_window }} minutes to complete your payment.</p>
+    <p>If the button above does not work, copy and paste this link into your browser:</p>
+    <p>{{ checkout_url }}</p>
+    <br>
+    <p>Thank you for shopping with us!</p>
+    <p>Best regards,<br>Shopvana Team</p>
+</body>
+</html>

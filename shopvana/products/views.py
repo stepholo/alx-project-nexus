@@ -1,7 +1,7 @@
 from .models import Category, Product
 from .serializers import CategorySerializer, ProductSerializer
 from rest_framework import viewsets, filters
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from utils.permissions import EcommercePermission
 from drf_yasg.utils import swagger_auto_schema
 
 @swagger_auto_schema(tags=["Product Cartegory"])
@@ -9,7 +9,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     """ViewSet for managing product categories."""
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [EcommercePermission]
 
     def perform_create(self, serializer: CategorySerializer) -> None:
         """Override to add custom behavior on create."""
@@ -29,7 +29,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     """ViewSet for managing products."""
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [EcommercePermission]
     search_fields = ['name', 'price', 'created_at', 'category']
     ordering_fields = ['name', 'price', 'created_at']
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
