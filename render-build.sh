@@ -1,4 +1,13 @@
 #!/usr/bin/env bash
+echo "📂 Current directory:"
+pwd
+
+echo "📂 Listing files in current directory:"
+ls -la
+
+echo "📂 Recursively listing structure:"
+ls -R
+
 set -o errexit  # Exit on error
 
 # 1. Install dependencies
