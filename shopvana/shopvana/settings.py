@@ -14,6 +14,7 @@ from pathlib import Path
 import environ
 import os
 from datetime import timedelta
+import dj_database_url
 
 # Initialize environment variables
 env = environ.Env(
@@ -35,7 +36,7 @@ SECRET_KEY = 'django-insecure-x3yuuc4pv)su(ty8%u1zuuew#*t-g8i3y52a8n@s9wx3q(f(=$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['shopvana-e-commerce.onrender.com', 'localhost']
 
 # Application definition
 
@@ -97,7 +98,10 @@ WSGI_APPLICATION = 'shopvana.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'default': dj_database_url.config(
+        default=env('DATABASE_URL')
+    ),
+    'postgres': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
