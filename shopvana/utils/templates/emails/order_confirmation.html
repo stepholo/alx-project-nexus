@@ -1,9 +1,14 @@
-<h2>Thank you for your order, {{ customer_name }}!</h2>
-<p>Your order <strong>#{{ order_id }}</strong> has been received and is being processed.</p>
+<p>Thank you for your order, {{ customer_name }}!</p>
+<p>Your order #{{ order_id }} has been received and is being processed.</p>
+
+<h3>Order Details:</h3>
 <ul>
-  {% for item in items %}
-    <li>{{ item.name }} x {{ item.quantity }}</li>
-  {% endfor %}
+    {% for item in items %}
+        <li>{{ item.quantity }} × {{ item.name }} — {{ item.price }} (Subtotal: {{ item.subtotal }})</li>
+    {% endfor %}
 </ul>
-<p>Total: <strong>{{ total }}</strong></p>
+
+<p><strong>Total:</strong> {{ order_total }}</p>
+
 <p>We will notify you once your items have been shipped.</p>
+<p>Best regards,<br>Shopvana Team</p>
