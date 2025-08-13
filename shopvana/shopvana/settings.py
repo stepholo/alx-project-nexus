@@ -162,14 +162,13 @@ CORS_ALLOW_CREDENTIALS = True
 # Rest Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        #'rest_framework.permissions.IsAuthenticated',
+        'utils.permissions.EcommercePermission',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'utils.pagination.CustomPagination',
-    #'DEFAULT_SCHEMA_CLASS': 'drf_yasg.generators.OpenAPISchemaGenerator',
-    #'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema',
 }
 
 # JWT Authentication settings
