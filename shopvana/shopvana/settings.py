@@ -91,7 +91,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'shopvana.wsgi.application'
+WSGI_APPLICATION = 'shopvana.shopvana.wsgi.application'
 
 
 # Database

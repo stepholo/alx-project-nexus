@@ -2,6 +2,7 @@
 set -o errexit  # Exit on error
 
 # 1. Install dependencies
+pip install --upgrade pip
 pip install -r requirements.txt
 
 # 2. Apply migrations
