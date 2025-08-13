@@ -3,12 +3,23 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db import transaction
+from django.conf import settings
+from uuid import uuid4
+import requests
+from utils.permissions import EcommercePermission
 from rest_framework import status
 from cart.models import CartItem
 from products.models import Product
+from payments.models import Payment
 from utils.email import send_notification_email
 from .serializers import OrderSerializer, OrderItemSerializer
+import logging
 from drf_yasg.utils import swagger_auto_schema
+
+# Chapa Credentials
+CHAPA_API_URL = f"{settings.CHAPA_BASE_URL.rstrip('/')}/transaction/initialize"
+CHAPA_VERIFY_URL = f"{settings.CHAPA_BASE_URL}/transaction/verify/"
+CHAPA_SECRET_KEY = settings.CHAPA_SECRET_KEY
 
 @swagger_auto_schema(tags=["Customer's Preference"])
 class OrderViewSet(viewsets.ModelViewSet):
@@ -16,7 +27,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+    permission_classes = [EcommercePermission]
 
     @action(detail=False, methods=['post'], url_path='checkout')
     @transaction.atomic
@@ -65,6 +76,8 @@ class OrderViewSet(viewsets.ModelViewSet):
             status='pending'
         )
 
+        order.mark_ready_for_payment(minutes_valid=60)  # Mark order ready for payment
+
         # Create order items and update stock
         for item in cart_items:
             product, new_stock = next((p, ns) for p, ns in stock_updates if p.product_id == item.product.product_id)
@@ -84,28 +97,87 @@ class OrderViewSet(viewsets.ModelViewSet):
         # Clear cart
         cart_items.delete()
 
-        serializer = self.get_serializer(order)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # Send order confirmation email
+        order_items_list = []
+        for item in order.items.select_related('product'):
+            order_items_list.append({
+                'name': item.product.name,
+                'price': item.product.price,
+                'quantity': item.quantity,
+                'subtotal': item.quantity * item.product.price
+            })
 
-    def perform_create(self, serializer):
-        """Override to set the user from the request."""
-        serializer.save(user=self.request.user)
         context = {
-            'customer_name': self.request.user.get_full_name(),
-            'order_id': serializer.instance.id,
-            'order_total': serializer.instance.total_amount,
-            'shipping_address': serializer.instance.shipping_address,
-            'status': serializer.instance.status,
-            'ordered_at': serializer.instance.ordered_at,
-            'items': serializer.instance.items.all(),
+            'customer_name': user.get_full_name(),
+            'order_id': order.id,
+            'order_total': order.total_amount,
+            'shipping_address': order.shipping_address,
+            'status': order.status,
+            'ordered_at': order.ordered_at,
+            'items': order_items_list
         }
-
         send_notification_email(
             subject='Order Confirmation',
             template_name='emails/order_confirmation.html',
             context=context,
-            recipient_list=[self.request.user.email]
+            to_email=user.email,
         )
+
+        # === Initiate payment with Chapa ===
+        order_id_short = str(order.order_id)[:8]
+        user_id_short = str(user.id)[:4]
+        random_part = uuid4().hex[:8]
+        tx_ref = f"o{order_id_short}u{user_id_short}{random_part}"
+
+        callback_url = f"{settings.SITE_URL}/api/payments/verify/"
+        payload = {
+            "amount": str(total_amount),
+            "currency": "ETB",  # or your preferred currency
+            "email": user.email,
+            "tx_ref": tx_ref,
+            "callback_url": callback_url,
+            "payment_method": "chapa",
+        }
+        headers = {"Authorization": f"Bearer {CHAPA_SECRET_KEY}"}
+        chapa_resp = requests.post(CHAPA_API_URL, json=payload, headers=headers)
+        logging.info(f"Chapa response: {chapa_resp.status_code} - {chapa_resp.text}")
+
+        checkout_url = None
+        if chapa_resp.status_code == 200:
+            resp_data = chapa_resp.json()
+            checkout_url = resp_data['data']['checkout_url']
+            logging.info(f"Chapa checkout URL: {checkout_url}")
+
+            # Save Payment record
+            Payment.objects.create(
+                order=order,
+                user=user,
+                chapa_tx_ref=tx_ref,
+                amount=total_amount,
+                currency="ETB",
+                status="pending",
+                payment_method="chapa",
+            )
+
+            # Send payment link email
+            send_notification_email(
+                to_email=user.email,
+                subject="Complete Your Payment",
+                template_name="emails/checkout_email.html",
+                context={
+                    "user_name": user.get_full_name() or user.username,
+                    "checkout_url": checkout_url,
+                    "payment_window": order.payment_window_expires_at,
+                }
+            )
+
+
+
+        serializer = self.get_serializer(order)
+        return Response({
+            "order": serializer.data,
+            "checkout_url": checkout_url
+        }, status=status.HTTP_201_CREATED)
 
     def perform_update(self, serializer):
         """Override to handle updates."""
@@ -123,7 +195,7 @@ class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
     lookup_field = 'id'
-    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+    permission_classes = [EcommercePermission]
 
     @transaction.atomic
     def perform_create(self, serializer):

@@ -1,5 +1,7 @@
 from django.db import models
 from uuid import uuid4
+from django.utils import timezone
+
 
 STATUS_CHOICES = (
         ('pending', 'Pending'),
@@ -18,7 +20,14 @@ class Order(models.Model):
         max_length=20, choices=STATUS_CHOICES, default='pending'
         )
     shipping_address = models.CharField(max_length=255)
+    ready_for_payment = models.BooleanField(default=False)
+    payment_window_expires_at = models.DateTimeField(null=True, blank=True)
     ordered_at = models.DateTimeField(auto_now_add=True)
+
+    def mark_ready_for_payment(self, minutes_valid=60):
+        self.ready_for_payment = True
+        self.payment_window_expires_at = timezone.now() + timezone.timedelta(minutes=minutes_valid)
+        self.save(update_fields=['ready_for_payment', 'payment_window_expires_at'   ])
 
     def save(self, *args, **kwargs):
         """Override save to propagate status changes to OrderItems."""

@@ -5,7 +5,7 @@ from .models import Order, OrderItem
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     """Admin interface for Order model."""
-    list_display = ('order_id', 'user', 'status', 'ordered_at')
+    list_display = ('order_id', 'user', 'status', 'ready_for_payment', 'payment_window_expires_at', 'ordered_at')
     search_fields = ('user__username',)
     list_filter = ('status', 'ordered_at')
     ordering = ('-ordered_at',)
