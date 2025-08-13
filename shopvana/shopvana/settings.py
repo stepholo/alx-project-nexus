@@ -159,7 +159,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://your-production-domain.com",
+    "https://shopvana-e-commerce.onrender.com",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -223,7 +223,7 @@ CELERY_BEAT_SCHEDULE = {
 CHAPA_SECRET_KEY = env('CHAPA_SECRET_KEY')
 CHAPA_PUBLIC_KEY = env('CHAPA_PUBLIC_KEY')
 CHAPA_BASE_URL = "https://api.chapa.co/v1/"
-SITE_URL = "http://127.0.0.1:8000"
+SITE_URL = ["https://shopvana-e-commerce.onrender.com", "http://127.0.0.1:8000"]
 
 # Logging Settings
 LOGGING = {
