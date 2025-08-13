@@ -3,8 +3,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
 from payments.models import Payment
-from django.conf import settings
-import requests
+from payments.utils import verify_chapa_payment
 import logging
 
 
@@ -14,7 +13,7 @@ CHAPA_VERIFY_URL = f"{settings.CHAPA_BASE_URL.rstrip('/')}/transaction/verify/"
 CHAPA_SECRET_KEY = settings.CHAPA_SECRET_KEY
 
 @shared_task
-def send_email_async(subject, template_name, context, recipient_list):
+def send_email_async(subject: str, template_name: str, context: dict, recipient_list: list) -> None:
     """
     A Celery task to send an email using a template.
 
@@ -34,26 +33,13 @@ def send_email_async(subject, template_name, context, recipient_list):
         fail_silently=False,
     )
 
-@shared_task
-def check_pending_payments():
-    pending_payments = Payment.objects.filter(status="pending")
-    headers = {"Authorization": f"Bearer {CHAPA_SECRET_KEY}"}
 
+@shared_task
+def check_pending_payments() -> None:
+    """Check and update the status of pending payments.
+       Send payment receipt emails for completed payments.
+    """
+    pending_payments = Payment.objects.filter(status="pending")
     for payment in pending_payments:
-        tx_ref = payment.chapa_tx_ref
-        try:
-            chapa_resp = requests.get(f"{CHAPA_VERIFY_URL}{tx_ref}", headers=headers)
-            if chapa_resp.status_code == 200:
-                resp_data = chapa_resp.json()
-                status_str = resp_data['data']['status']
-                if status_str == "success":
-                    payment.status = "completed"
-                    payment.order.status = "paid"
-                    payment.order.save()
-                elif status_str == "failed":
-                    payment.status = "failed"
-                    payment.order.status = "cancelled"
-                    payment.order.save()
-                payment.save()
-        except Exception as e:
-            logger.error(f"Error checking payment {tx_ref}: {e}")
+        verify_chapa_payment(payment)
+        logger.info(f"Checked payment {payment.chapa_tx_ref} status.")
