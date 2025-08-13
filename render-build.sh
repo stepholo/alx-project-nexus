@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
-echo "📂 Current directory:"
-pwd
-
-echo "📂 Listing files in current directory:"
-ls -la
-
-echo "📂 Recursively listing structure:"
-ls -R
+# render-build.sh
 
 set -o errexit  # Exit on error
 
@@ -15,10 +8,10 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 # 2. Apply migrations
-python manage.py migrate
+python shopvana/manage.py migrate
 
 # 3. Collect static files
-python manage.py collectstatic --noinput
+python shopvana/manage.py collectstatic --noinput
 
 # 4. Create a superuser if not exists
-python manage.py createsuperuser --noinput || true
+python shopvana/manage.py createsuperuser --noinput || true
