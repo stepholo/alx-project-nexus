@@ -1,6 +1,7 @@
 from .models import Review
 from .serializers import ReviewSerializer
 from rest_framework import viewsets, serializers
+from utils.permissions import EcommercePermission
 from drf_yasg.utils import swagger_auto_schema
 
 @swagger_auto_schema(tags=["Reviews"])
@@ -9,7 +10,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
+    permission_classes = [EcommercePermission]
 
     def perform_create(self, serializer: ReviewSerializer) -> None:
         """Allow reviews only for paid order items, one per user per item."""

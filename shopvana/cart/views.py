@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from utils.permissions import EcommercePermission
 from .models import CartItem
 from .serializers import CartItemSerializer
 from drf_yasg.utils import swagger_auto_schema
@@ -9,11 +9,13 @@ class CartItemViewSet(viewsets.ModelViewSet):
     """Viewset for managing Cart Items"""
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [EcommercePermission]
 
     def get_queryset(self):
         # Return only cart items for the authenticated user
-        return CartItem.objects.filter(user=self.request.user)
+            if not self.request.user.is_authenticated:
+                return CartItem.objects.none()  # Empty queryset for anonymous users
+            return CartItem.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         """Auto-increment quantity if the item already exists in cart"""
