@@ -23,7 +23,8 @@ class UserSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id', 'date_joined', 'last_login', 'activation_token']
         extra_kwargs = {
-            'password': {'write_only': True}
+            'password': {'write_only': True},
+            'role': {'required': False, 'default': 'customer'}
         }
 
     def get_full_name(self, obj: User) -> str:
@@ -88,4 +89,57 @@ class UserSerializer(serializers.ModelSerializer):
         if password:
             user.set_password(password)
             user.save()
+        return user
+
+
+class RegistrationSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        write_only=True,
+        required=True,
+        min_length=8,
+        style={'input_type': 'password'}
+    )
+
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'username', 'password', 'first_name', 'last_name', 'role']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'role': {'required': False, 'default': 'customer'}
+        }
+
+    def validate_email(self, value):
+        # Reuse your existing email validation logic
+        if not value.endswith('.com'):
+            raise serializers.ValidationError("Email must end with .com")
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email already exists")
+        if not value:
+            raise serializers.ValidationError("Email cannot be empty")
+        if value[0].isupper():
+            raise serializers.ValidationError("Email must start with a lowercase letter")
+        if not value[0].isalpha():
+            raise serializers.ValidationError("Email must start with a letter")
+        if '@' not in value:
+            raise serializers.ValidationError("Email must contain '@'")
+        return value
+
+    def validate_username(self, value):
+        if not value:
+            raise serializers.ValidationError("Username cannot be empty")
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Username already exists")
+        if not value[0].isalpha():
+            raise serializers.ValidationError("Username must start with a letter")
+        return value
+
+    def validate_password(self, value):
+        validate_password(value)
+        return value
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
         return user
