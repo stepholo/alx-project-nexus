@@ -13,4 +13,4 @@ python shopvana/manage.py migrate
 # 4. Create a superuser if not exists
 python shopvana/manage.py createsuperuser --noinput || true
 
-find . -name settings.py
+cd shopvana && gunicorn shopvana.wsgi
