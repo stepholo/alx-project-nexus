@@ -130,6 +130,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         tx_ref = f"o{order_id_short}u{user_id_short}{random_part}"
 
         callback_url = f"{settings.SITE_URL}/api/payments/verify/"
+        logging.info(f"Call back URL: {callback_url}")
         payload = {
             "amount": str(total_amount),
             "currency": "ETB",  # or your preferred currency

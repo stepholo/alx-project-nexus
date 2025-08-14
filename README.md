@@ -1,6 +1,6 @@
 # Shopvana E-Commerce Backend
 
-Shopvana is a robust backend system for an e-commerce platform, built with Django and Django REST Framework. It supports product catalog management, user authentication, order processing, payments, reviews, wishlists, and more. This project is designed for real-world scalability and maintainability, and is a portfolio-ready showcase for backend engineering skills.
+Shopvana is a robust backend system for an e-commerce platform, built with Django and Django REST Framework. It supports product catalog management, user authentication, order processing, payments, reviews and wishlists. This project is designed for real-world scalability and maintainability, and is a portfolio-ready showcase for backend engineering skills.
 
 ---
 
@@ -30,7 +30,6 @@ Shopvana is a robust backend system for an e-commerce platform, built with Djang
 | Celery + Redis       | Asynchronous tasks & caching              |
 | Chapa                | Payment gateway integration               |
 | Swagger, Postman     | API documentation & testing               |
-| Docker (optional)    | Containerization                          |
 
 ---
 
@@ -55,46 +54,34 @@ shopvana/
 
 ## ⚡ Installation & Setup
 
+```sh
 1. **Clone the repository:**
-    ```sh
     git clone https://github.com/stepholo/shopvana.git
     cd shopvana
-    ```
 
 2. **Create and activate a virtual environment:**
-    ```sh
     python3 -m venv E-comm
     source E-comm/bin/activate
-    ```
 
 3. **Install dependencies:**
-    ```sh
     pip install -r requirements.txt
-    ```
 
 4. **Configure environment variables:**
     - Copy `.env.example` to `.env` and fill in your secrets (DB, email, Chapa keys, etc.).
 
 5. **Apply migrations:**
-    ```sh
     python manage.py migrate
-    ```
 
 6. **Create a superuser (admin):**
-    ```sh
     python manage.py createsuperuser
-    ```
 
 7. **Run the development server:**
-    ```sh
     python manage.py runserver
-    ```
 
 8. **Start Celery worker and beat (for async tasks):**
-    ```sh
     celery -A shopvana worker -l info
     celery -A shopvana beat -l info
-    ```
+```
 
 ---
 
