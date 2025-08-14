@@ -36,7 +36,7 @@ SECRET_KEY = 'django-insecure-x3yuuc4pv)su(ty8%u1zuuew#*t-g8i3y52a8n@s9wx3q(f(=$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['shopvana-e-commerce.onrender.com', 'localhost']
+ALLOWED_HOSTS = ['shopvana-e-commerce.onrender.com']
 
 # Application definition
 
@@ -98,9 +98,16 @@ WSGI_APPLICATION = 'shopvana.shopvana.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=env('DATABASE_URL')
-    ),
+    'default': dj_database_url.config(default=env('DATABASE_URL')),
+
+    #{
+    #    'ENGINE': 'django.db.backends.postgresql',
+    #    'NAME': env('DB_NAME'),
+    #    'USER': env('DB_USER'),
+    #    'PASSWORD': env('DB_PASSWORD'),
+    #    'HOST': env('DB_HOST'),
+    #    'PORT': env('DB_PORT'),
+    #}
 }
 
 # Password validation
@@ -214,7 +221,7 @@ CELERY_BEAT_SCHEDULE = {
 CHAPA_SECRET_KEY = env('CHAPA_SECRET_KEY')
 CHAPA_PUBLIC_KEY = env('CHAPA_PUBLIC_KEY')
 CHAPA_BASE_URL = "https://api.chapa.co/v1/"
-SITE_URL = ["https://shopvana-e-commerce.onrender.com", "http://127.0.0.1:8000"]
+SITE_URL = "https://shopvana-e-commerce.onrender.com"
 
 # Logging Settings
 LOGGING = {
