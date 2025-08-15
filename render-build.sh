@@ -15,4 +15,4 @@ python shopvana/manage.py createsuperuser --noinput || true
 
 tree -L 2
 
-cd shopvana && gunicorn shopvana.wsgi
+cd shopvana
