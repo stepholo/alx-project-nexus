@@ -13,16 +13,35 @@ services:
         sync: false
       - key: DJANGO_SUPERUSER_EMAIL
         sync: false
-    releaseCommand: >
-      python shopvana/manage.py migrate &&
-      python shopvana/manage.py collectstatic --noinput &&
-      python shopvana/manage.py shell -c "
-      from django.contrib.auth import get_user_model;
-      User = get_user_model();
-      import os;
-      username=os.environ['DJANGO_SUPERUSER_USERNAME'];
-      email=os.environ['DJANGO_SUPERUSER_EMAIL'];
-      password=os.environ['DJANGO_SUPERUSER_PASSWORD'];
-      if not User.objects.filter(username=username).exists():
-        User.objects.create_superuser(username=username, email=email, password=password)
-      "
+releaseCommand: >
+  python shopvana/manage.py migrate &&
+  python shopvana/manage.py collectstatic --noinput &&
+  python shopvana/manage.py shell -c "
+from django.contrib.auth import get_user_model;
+import os;
+User = get_user_model();
+username=os.environ['DJANGO_SUPERUSER_USERNAME'];
+email=os.environ['DJANGO_SUPERUSER_EMAIL'];
+password=os.environ['DJANGO_SUPERUSER_PASSWORD'];
+
+user, created = User.objects.get_or_create(username=username, defaults={'email': email});
+if created:
+    user.set_password(password);
+    user.is_superuser = True;
+    user.is_staff = True;
+    user.is_active = True;
+    user.save();
+    print(f'✅ Superuser {username} created.');
+else:
+    user.set_password(password);
+    user.is_active = True;
+    user.save();
+    print(f'ℹ️ Superuser {username} already existed. Password reset and user activated.');
+
+print('--- User Status ---');
+print(f'Username: {user.username}');
+print(f'Email: {user.email}');
+print(f'Active: {user.is_active}');
+print(f'Staff: {user.is_staff}');
+print(f'Superuser: {user.is_superuser}');
+"
