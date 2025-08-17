@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: shopvana
+    env: python
+    buildCommand: "./render-build.sh"
+    startCommand: "gunicorn shopvana.wsgi:application --chdir shopvana --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DJANGO_SUPERUSER_USERNAME
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+    releaseCommand: >
+      python shopvana/manage.py migrate &&
+      python shopvana/manage.py createsuperuser --noinput || true

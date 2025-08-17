@@ -3,21 +3,9 @@
 
 set -o errexit  # Exit on error
 
-# 1. Install dependencies
+# 1. Upgrade pip & install dependencies
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# 2. Apply migrations
-python shopvana/manage.py migrate
-
-# Collect static files
+# 2. Collect static files (build-time)
 python shopvana/manage.py collectstatic --noinput
-
-# 4. Create a superuser if not exists
-python shopvana/manage.py createsuperuser --noinput || true
-
-pwd; ls -l
-
-cd shopvana
-
-pwd; ls -l
