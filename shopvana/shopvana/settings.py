@@ -288,7 +288,7 @@ JAZZMIN_SETTINGS = {
         {"name": "Support", "url": "https://example.com/support", "new_window": True},
     ],
     "changeform_format": "horizontal_tabs",  # Options: single, horizontal_tabs, vertical_tabs, carousel, collapsible
-    "custom_css": "admin/css/custom.css",  # For further styling
+    # "custom_css": "admin/css/custom.css",  # For further styling
     "show_ui_builder": True,
     "order_with_respect_to": [
         "users",
