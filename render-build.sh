@@ -19,13 +19,14 @@ username=os.environ['DJANGO_SUPERUSER_USERNAME'];
 email=os.environ['DJANGO_SUPERUSER_EMAIL'];
 password=os.environ['DJANGO_SUPERUSER_PASSWORD'];
 try:
-    user = User.objects.get(username=username)
+    user = User.objects.get(email=email)
+    user.username = username
     user.is_active = True
     user.is_staff = True
     user.is_superuser = True
     user.set_password(password)
     user.save()
-    msg = f'>>> Existing superuser {username} updated and activated.'
+    msg = f'>>> Existing superuser with email {email} updated and activated.'
 except User.DoesNotExist:
     user = User.objects.create_superuser(username=username, email=email, password=password)
     user.is_active = True
